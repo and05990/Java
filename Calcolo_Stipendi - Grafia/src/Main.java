@@ -1,11 +1,14 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -324,153 +327,168 @@ public class Main extends JFrame{
         }while(scelta != 0);*/
 
 
-        //make a simple graphic interface with JFrame
+
         JFrame frame = new JFrame("Gestione dipendenti");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        frame.setSize(900, 450);
         frame.setLayout(null);
-        //frame.setResizable(false);
+        frame.setResizable(false);
+        frame.getContentPane().setBackground(new Color(255, 255, 255));
 
-        //make a panel
-        JPanel panel = new JPanel();
-        panel.setBounds(0, 0, 1000, 600);
-        panel.setBackground(Color.WHITE);
-        panel.setLayout(null);
-        frame.add(panel);
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JLabel footer = new JLabel("Fatto da: Quagliotti Andrea, Berlinghieri Gloria e Rocchi Letizia, 4B INF");
+        footer.setBounds(10, 390, 500, 20);
+        frame.add(footer);
 
         JLabel label = new JLabel("Gestione dipendenti");
-        label.setBounds(450, 0, 200, 20);
-        panel.add(label);
+        label.setBounds(370, 10, 200, 20);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+        frame.add(label);
 
 
-
-        //add a button to add a new dipendente
         JButton buttonAdd = new JButton("Aggiungi dipendente");
-        //replace the setBounds with setSize and setLocation
-        buttonAdd.setSize(200, 20);
-        buttonAdd.setLocation(85, 20);
-        panel.add(buttonAdd);
+        buttonAdd.setBounds(10, 320, 200, 20);
 
-        //add a button to remove a dipendente
+
         JButton buttonRem = new JButton("Rimuovi dipendente");
-        buttonRem.setSize(200, 20);
-        buttonRem.setLocation(85, 50);
-        panel.add(buttonRem);
+        buttonRem.setBounds(10, 350, 200, 20);
 
-        //add a button to change the salary of a dipendente
+
+        JButton buttonClear = new JButton("Cancella la lista");
+        buttonClear.setBounds(250, 350, 200, 20);
+
+
         JButton buttonChange = new JButton("Cambia stipendio");
-        buttonChange.setSize(200, 20);
-        buttonChange.setLocation(85, 80);
-        panel.add(buttonChange);
+        buttonChange.setBounds(490, 350, 200, 20);
 
-        //add a table with three columns String, one Integer and two Double
+
         String[] columnNames = {"Codice", "Nome", "Cognome", "Anno di inizio", "Ruolo", "Interno/Esterno", "Ore di lavoro", "Stipendio(€)"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        JTable table = new JTable(tableModel);
+        JTable table = new JTable(tableModel){public boolean isCellEditable(int row,int column)
+        {
+            return switch (column) {
+                case 0 -> false;
+                case 4 -> false;
+                case 5 -> false;
+                case 7 -> false;
+                default -> true;
+            };
+        }};
+
+        JTableHeader tableHeader = table.getTableHeader();
+        tableHeader.setBackground(Color.GRAY);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(300, 50, 600, 300);
-        panel.add(scrollPane);
+        scrollPane.setBounds(250, 50, 600, 300);
+        frame.add(scrollPane);
 
-        JLabel labelName = new JLabel("Nome");
-        labelName.setSize(50, 20);
-        labelName.setLocation(10, 200);
+        JLabel labelName = new JLabel("Nome:");
+        labelName.setBounds(10, 50, 50, 20);
+
         JTextField textFieldName = new JTextField();
-        textFieldName.setSize(200, 20);
-        textFieldName.setLocation(85, 200);
+        textFieldName.setBounds(10, 70, 200, 20);
 
-        JLabel labelSurname = new JLabel("Cognome");
-        labelSurname.setSize(50, 20);
-        labelSurname.setLocation(10, 230);
+
+        JLabel labelSurname = new JLabel("Cognome:");
+        labelSurname.setBounds(10, 90, 100, 20);
+
         JTextField textFieldSurname = new JTextField();
-        textFieldSurname.setSize(200, 20);
-        textFieldSurname.setLocation(85, 230);
+        textFieldSurname.setBounds(10, 110, 200, 20);
 
-        JLabel labelCodice = new JLabel("Codice");
-        labelCodice.setSize(50, 20);
-        labelCodice.setLocation(10, 260);
-        JTextField textFieldCodice = new JTextField();
-        textFieldCodice.setSize(200, 20);
-        textFieldCodice.setLocation(85, 260);
 
-        JLabel labelOre = new JLabel("Ore");
-        labelOre.setSize(50, 20);
-        labelOre.setLocation(10, 290);
+        JLabel labelOre = new JLabel("Ore:");
+        labelOre.setBounds(10, 130, 50, 20);
+
         JTextField textFieldOre = new JTextField();
-        textFieldOre.setSize(200, 20);
-        textFieldOre.setLocation(85, 290);
+        textFieldOre.setBounds(10, 150, 200, 20);
 
-        JLabel labelAnno = new JLabel("Anno di inizio");
-        labelAnno.setSize(100, 20);
-        labelAnno.setLocation(10, 320);
+
+        JLabel labelAnno = new JLabel("Anno di inizio:");
+        labelAnno.setBounds(10, 170, 100, 20);
+
         JTextField textFieldAnno = new JTextField();
-        textFieldAnno.setSize(200, 20);
-        textFieldAnno.setLocation(85, 320);
+        textFieldAnno.setBounds(10, 190, 200, 20);
 
-        //make a menu to choose the type of the dipendente
+
+        JLabel labelProfessione = new JLabel("Professione:");
+        labelProfessione.setBounds(10, 210, 100, 20);
+
         String[] type = {"Tecnico", "Funzionario", "Dirigente"};
-        JComboBox<String> comboBoxTipo = new JComboBox<>(type);
-        comboBoxTipo.setBounds(85, 370, 200, 20);
+        JComboBox<String> comboBox = new JComboBox<>(type);
+        comboBox.setBounds(10, 230, 200, 20);
 
-        //if type is Tecnico, make a menu to choose the type of the Tecnico (elettronico or informatico) and (interno or esterno)
-        String[] typeTecnico = {"Elettronico", "Informatico"};
+
+        String[] typeTecnico = {"Elettronica/Automazione", "Informatica/Telecomunicazioni"};
         JComboBox<String> comboBoxTecnico = new JComboBox<>(typeTecnico);
-        comboBoxTecnico.setBounds(85, 400, 200, 20);
+        comboBoxTecnico.setBounds(10, 260, 200, 20);
+
 
         String[] typeTecnico2 = {"Interno", "Esterno"};
         JComboBox<String> comboBoxTecnico2 = new JComboBox<>(typeTecnico2);
-        comboBoxTecnico2.setBounds(85, 430, 200, 20);
+        comboBoxTecnico2.setBounds(10, 290, 200, 20);
 
-        //add all the components to the frame
-        panel.add(labelName);
-        panel.add(textFieldName);
-        panel.add(labelSurname);
-        panel.add(textFieldSurname);
-        panel.add(labelCodice);
-        panel.add(textFieldCodice);
-        panel.add(labelOre);
-        panel.add(textFieldOre);
-        panel.add(labelAnno);
-        panel.add(textFieldAnno);
-        panel.add(comboBoxTipo);
-        panel.add(comboBoxTecnico);
-        panel.add(comboBoxTecnico2);
+        frame.add(labelName);
+        frame.add(textFieldName);
+        frame.add(labelSurname);
+        frame.add(textFieldSurname);
+        frame.add(labelOre);
+        frame.add(textFieldOre);
+        frame.add(labelAnno);
+        frame.add(textFieldAnno);
+        frame.add(labelProfessione);
+        frame.add(comboBox);
+        frame.add(comboBoxTecnico);
+        frame.add(comboBoxTecnico2);
+        frame.add(buttonAdd);
+        frame.add(buttonRem);
+        frame.add(buttonChange);
+        frame.add(buttonClear);
 
-
-        //if type Funzionario or Dirigente make the comboBoxTecnico and comboBoxTecnico2 invisible
-        comboBoxTipo.addActionListener(e -> {
-            if(comboBoxTipo.getSelectedIndex() == 0){
-                comboBoxTecnico.setVisible(true);
-                comboBoxTecnico2.setVisible(true);
+        comboBox.addActionListener(e -> {
+            if(comboBox.getSelectedIndex() == 0){
+                comboBoxTecnico.setEnabled(true);
+                comboBoxTecnico2.setEnabled(true);
             }else{
-                comboBoxTecnico.setVisible(false);
-                comboBoxTecnico2.setVisible(false);
+                comboBoxTecnico.setEnabled(false);
+                comboBoxTecnico2.setEnabled(false);
             }
         });
 
+        buttonRem.setEnabled(false);
+        buttonClear.setEnabled(false);
+
         JLabel labelCost = new JLabel("Costo totale: ");
-        labelCost.setText("Costo totale: 0");
-        labelCost.setBounds(810, 350, 200, 20);
+        labelCost.setText("Costo totale: 0€");
+        labelCost.setBounds(740, 350, 200, 20);
         frame.add(labelCost);
-        //on click buttonAdd, fill the table with textField and comboBox data
+
         buttonAdd.addActionListener(e -> {
             try{
                 String nome = textFieldName.getText();
                 String cognome = textFieldSurname.getText();
-                int cod = Integer.parseInt(textFieldCodice.getText());
                 int anno_di_inizio = Integer.parseInt(textFieldAnno.getText());
-                String ruolo = (String) comboBoxTipo.getSelectedItem();
+                String ruolo = (String) comboBox.getSelectedItem();
                 String tipo = (String) comboBoxTecnico.getSelectedItem();
                 String interno = (String) comboBoxTecnico2.getSelectedItem();
                 double ore = Double.parseDouble(textFieldOre.getText());
+                int cod = table.getRowCount() + 1;
 
-                if(cod < 0 || anno_di_inizio < 0 || ore < 0){
-                    JOptionPane.showMessageDialog(null, "Errore: i campi Codice, Anno di inizio e Ore devono essere positivi");
+                if(anno_di_inizio < 0 || ore < 0 || nome.equals("") || cognome.equals("")){
+                    JOptionPane.showMessageDialog(null, "Errore: campi non validi");
+                    return;
+                }
+                if(anno_di_inizio > Progetto.getAnno_corrente()){
+                    JOptionPane.showMessageDialog(null, "Errore: anno di inizio non valido");
                     return;
                 }
 
-                if(comboBoxTipo.getSelectedIndex() == 0){
+                if(comboBox.getSelectedIndex() == 0){
                     Tecnico tecnico;
                     if(tipo.equals("Elettronico") && interno.equals("Interno")) {
                         tecnico = new Tecnico(nome, cognome, cod, anno_di_inizio, ore, false, true);
@@ -483,60 +501,92 @@ public class Main extends JFrame{
                     }
                     dipendenti.add(tecnico);
                     tableModel.addRow(new Object[]{tecnico.getCodice(), tecnico.getNome(), tecnico.getCognome(), tecnico.getAnno_inizio(), ruolo + " " + tipo, interno, ore, tecnico.calcolaStipendio()});
-                }else if(comboBoxTipo.getSelectedIndex() == 1){
+                }else if(comboBox.getSelectedIndex() == 1){
                     Funzionario funzionario = new Funzionario(nome, cognome, cod, anno_di_inizio, ore);
                     tableModel.addRow(new Object[]{funzionario.getCodice(), funzionario.getNome(), funzionario.getCognome(), funzionario.getAnno_inizio(), ruolo, "Interno", ore, funzionario.calcolaStipendio()});
                     dipendenti.add(funzionario);
-                }else if(comboBoxTipo.getSelectedIndex() == 2){
+                }else if(comboBox.getSelectedIndex() == 2){
                     Dirigente dirigente = new Dirigente(nome, cognome, cod, anno_di_inizio, ore);
                     dipendenti.add(dirigente);
-                    tableModel.addRow(new Object[]{dirigente.getCodice(), dirigente.getNome(), dirigente.getCognome(), dirigente.getAnno_inizio(), ruolo, "", ore, dirigente.calcolaStipendio()});
+                    tableModel.addRow(new Object[]{dirigente.getCodice(), dirigente.getNome(), dirigente.getCognome(), dirigente.getAnno_inizio(), ruolo, "Interno", ore, dirigente.calcolaStipendio()});
                 }
 
                 double cost = 0;
                 for(Progetto dipendente : dipendenti){
                     cost += dipendente.calcolaStipendio();
                 }
-                labelCost.setText("Costo totale: " + cost);
+                labelCost.setText("Costo totale: " + cost + "€");
+
+                buttonRem.setEnabled(true);
+                buttonClear.setEnabled(true);
+
+                textFieldName.setText("");
+                textFieldSurname.setText("");
+                textFieldAnno.setText("");
+                textFieldOre.setText("");
+                comboBox.setSelectedIndex(0);
+                comboBoxTecnico.setSelectedIndex(0);
+                comboBoxTecnico2.setSelectedIndex(0);
             }catch (NumberFormatException ex){
-                JOptionPane.showMessageDialog(null, "Errore: i campi Codice, Anno di inizio e Ore devono essere numeri");
+                JOptionPane.showMessageDialog(null, "Errore: i campi correttamente");
             }
 
         });
 
-        //on click buttonDelete, delete the selected row
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                c.setForeground(table.getForeground());
+                if(row % 2 == 0){
+                    c.setBackground(Color.LIGHT_GRAY);
+                }else{
+                    c.setBackground(Color.WHITE);
+                }
+                return c;
+            }
+        });
+
         buttonRem.addActionListener(e -> {
             int row = table.getSelectedRow();
             if(row >= 0){
                 tableModel.removeRow(row);
             }
+            if(tableModel.getRowCount() == 0){
+                buttonRem.setEnabled(false);
+                buttonClear.setEnabled(false);
+            }
+
+            for(int i = 0; i < table.getRowCount(); i++){
+                table.setValueAt(i + 1, i, 0);
+            }
         });
 
-        //on buttonChange, show a input dialog with combobox
         buttonChange.addActionListener(e -> {
             try{
                 String[] type2 = {"Tecnico", "Funzionario", "Dirigente"};
                 JComboBox<String> comboBox3 = new JComboBox<>(type2);
                 comboBox3.setBounds(85, 400, 200, 20);
-                JOptionPane.showMessageDialog(null, comboBox3, "Seleziona il ruolo", JOptionPane.QUESTION_MESSAGE);
+
+                JOptionPane.showMessageDialog(null, comboBox3, "Seleziona il tipo", JOptionPane.QUESTION_MESSAGE);
                 String ruolo = (String) comboBox3.getSelectedItem();
-
-                //if type is Tecnico, make a menu to choose the type of the Tecnico (elettronico or informatico) and (interno or esterno)
-
-                switch (Objects.requireNonNull(ruolo)) {
+                if(ruolo == null){
+                    return;
+                }
+                switch (ruolo) {
                     case "Tecnico" -> {
                         String[] tipoTecnico = {"Elettronico", "Informatico"};
                         JComboBox<String> cbTecnico = new JComboBox<>(tipoTecnico);
-                        comboBoxTecnico.setBounds(85, 430, 200, 20);
-                        JOptionPane.showMessageDialog(null, cbTecnico, "Seleziona il nuovo tipo", JOptionPane.QUESTION_MESSAGE);
+                        cbTecnico.setBounds(85, 430, 200, 20);
+
+                        JOptionPane.showMessageDialog(null, cbTecnico, "Seleziona il tipo", JOptionPane.QUESTION_MESSAGE);
                         String tipo = (String) cbTecnico.getSelectedItem();
 
-                        //show input dialog for stipendio
                         int stipendio = Integer.parseInt(JOptionPane.showInputDialog("Inserisci il nuovo stipendio"));
-                        if (stipendio < 0) {
+                        if (stipendio <= 0) {
                             JOptionPane.showMessageDialog(null, "Errore: lo stipendio deve essere positivo");
                         }
-                        //check if the type is elettronico or informatico
+
                         if (tipo.equals("Elettronico")) {
                             Tecnico.setStipendio_elettronico(stipendio);
                         } else {
@@ -546,11 +596,13 @@ public class Main extends JFrame{
                     case "Funzionario" -> {
                         String[] tipoFunzionario = {"Junior", "Senior"};
                         JComboBox<String> cbFunzionario = new JComboBox<>(tipoFunzionario);
-                        comboBoxTecnico.setBounds(85, 430, 200, 20);
-                        JOptionPane.showMessageDialog(null, cbFunzionario, "Seleziona il nuovo tipo", JOptionPane.QUESTION_MESSAGE);
+                        cbFunzionario.setBounds(85, 430, 200, 20);
+
+                        JOptionPane.showMessageDialog(null, cbFunzionario, "Seleziona il tipo", JOptionPane.QUESTION_MESSAGE);
                         String tipo = (String) cbFunzionario.getSelectedItem();
+
                         int stipendio = Integer.parseInt(JOptionPane.showInputDialog("Inserisci il nuovo stipendio"));
-                        if (stipendio < 0) {
+                        if (stipendio <= 0) {
                             JOptionPane.showMessageDialog(null, "Errore: lo stipendio deve essere positivo");
                         }
                         if (tipo.equals("Junior")) {
@@ -561,7 +613,7 @@ public class Main extends JFrame{
                     }
                     case "Dirigente" -> {
                         int stipendio = Integer.parseInt(JOptionPane.showInputDialog("Inserisci il nuovo stipendio"));
-                        if (stipendio < 0) {
+                        if (stipendio <= 0) {
                             JOptionPane.showMessageDialog(null, "Errore: lo stipendio deve essere positivo");
                         }
                         Dirigente.setStipendio(stipendio);
@@ -569,19 +621,25 @@ public class Main extends JFrame{
                     default -> JOptionPane.showMessageDialog(null, "Errore: seleziona un ruolo");
                 }
 
-                //update every row column 7 with the new stipendio
+                double cost = 0;
                 for(int i = 0; i < tableModel.getRowCount(); i++){
                     tableModel.setValueAt(dipendenti.get(i).calcolaStipendio(), i, 7);
+                    cost += dipendenti.get(i).calcolaStipendio();
                 }
-
-                double cost = 0;
-                for(Progetto dipendente : dipendenti){
-                    cost += dipendente.calcolaStipendio();
-                }
-                labelCost.setText("Costo totale: " + cost);
+                labelCost.setText("Costo totale: " + cost + "€");
             }catch (NumberFormatException ex){
                 JOptionPane.showMessageDialog(null, "Errore: lo stipendio deve essere un numero");
             }
         });
+
+        buttonClear.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler cancellare tutti i dati?", "Conferma", JOptionPane.YES_NO_OPTION);
+            if(confirm == 0){
+                tableModel.setRowCount(0);
+                dipendenti.clear();
+            }
+        });
+
+        frame.setVisible(true);
     }
 }
