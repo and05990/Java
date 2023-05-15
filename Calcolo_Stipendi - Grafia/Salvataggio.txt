@@ -1,0 +1,7 @@
+andrea,quagliotti,1,2010,40.0,Tecnico,true,true;
+skerdi,velo,2,2015,50.0,Tecnico,true,false;
+nabil,touri,3,2015,40.0,Tecnico,false,true;
+davide,rossini,4,2019,20.0,Tecnico,false,false;
+letizia,rocchi,5,2009,50.0,Funzionario;
+gloria,berlinghieri,6,2015,50.0,Funzionario;
+sabrina,branchi,7,2005,100.0,Dirigente,100;
