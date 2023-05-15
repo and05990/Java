@@ -1,2 +1,0 @@
-nome: qe cognome: qeqw codice: 1 anno di inizio: 123 elettronica/automazione interno
-nome: 123 cognome: 123 codice: 2 anno di inizio: 123 elettronica/automazione interno
